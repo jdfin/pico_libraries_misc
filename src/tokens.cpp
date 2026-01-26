@@ -1,13 +1,16 @@
-#include "tokens.h"
-#include "pico/stdlib.h"
-#include "xassert.h"
+#include <ctype.h>
+
+#include <cassert>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <ctype.h>
+// pico
+#include "pico/stdlib.h"
+// misc
+#include "tokens.h"
 
-Tokens::Tokens()
-    : _verbosity(1)
+Tokens::Tokens() :
+    _verbosity(1)
 {
     reset();
 }
@@ -36,13 +39,13 @@ void Tokens::print() const
 
 void Tokens::eat(int cnt)
 {
-    xassert(cnt <= tokens_cnt_max);
+    assert(cnt <= tokens_cnt_max);
 
     if (cnt > _tokens_cnt)
         cnt = _tokens_cnt;
 
     for (int i = 0; i < (_tokens_cnt - cnt); i++) {
-        xassert(strlen(_tokens[i + cnt]) < token_len_max);
+        assert(strlen(_tokens[i + cnt]) < token_len_max);
         strcpy(_tokens[i], _tokens[i + cnt]);
     }
 
@@ -54,7 +57,7 @@ void Tokens::eat(int cnt)
 // copy input buffer to next token slot
 void Tokens::add_token()
 {
-    xassert(strlen(_input) < input_max);
+    assert(strlen(_input) < input_max);
     // should not have more than max tokens, but if we do, take them fifo
     if (_tokens_cnt == tokens_cnt_max)
         eat(1);
@@ -68,8 +71,8 @@ void Tokens::add_token()
 // move the input buffer to the tokens array.
 void Tokens::add_char(char c)
 {
-    xassert(_input_cnt < input_max);
-    xassert(_input[_input_cnt] == '\0');
+    assert(_input_cnt < input_max);
+    assert(_input[_input_cnt] == '\0');
 
     if (c == escape) {
         reset();
@@ -104,8 +107,8 @@ void Tokens::add_char(char c)
     }
 }
 
-const char* Tokens::operator[](int idx) const
+const char *Tokens::operator[](int idx) const
 {
-    xassert(idx >= 0 && idx < _tokens_cnt);
+    assert(idx >= 0 && idx < _tokens_cnt);
     return _tokens[idx];
 }

@@ -2,6 +2,7 @@ add_library(misc INTERFACE)
 
 target_sources(misc INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/src/argv.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/assert.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/buf_log.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/dma_irq_mux.c
     ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
@@ -10,7 +11,6 @@ target_sources(misc INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/src/pwm_irq_mux.c
     ${CMAKE_CURRENT_LIST_DIR}/src/str_ops.c
     ${CMAKE_CURRENT_LIST_DIR}/src/sys_led.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/xassert.cpp
 )
 
 target_include_directories(misc INTERFACE 

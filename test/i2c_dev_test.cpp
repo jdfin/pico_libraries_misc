@@ -1,4 +1,5 @@
 
+#include <cassert>
 #include <cstdint>
 #include <cstdio>
 // pico
@@ -8,7 +9,6 @@
 // misc
 #include "dbg_gpio.h"
 #include "i2c_dev.h"
-#include "xassert.h"
 // touchscreen
 #include "gt911.h"
 
@@ -44,7 +44,7 @@ int main()
     Gt911 gt911(i2c_dev, tp_i2c_addr, tp_rst_pin, tp_int_pin);
 
     constexpr int verbosity = 2;
-    xassert(gt911.init(verbosity));
+    assert(gt911.init(verbosity));
 
     printf("i2c_dev_test: ready\n");
 
@@ -89,7 +89,7 @@ static uint8_t read_status(I2cDev &i2c)
         tight_loop_contents();
 
     int rd_cnt = i2c.write_read_async_check();
-    xassert(rd_cnt == rd_len);
+    assert(rd_cnt == rd_len);
 
     return rd_buf[0];
 }
@@ -118,7 +118,7 @@ static void read_touch(I2cDev &i2c, int &x, int &y)
         tight_loop_contents();
 
     int rd_cnt = i2c.write_read_async_check();
-    xassert(rd_cnt == 4);
+    assert(rd_cnt == 4);
 
     x = (int(rd_buf[1]) << 8) | rd_buf[0];
     y = (int(rd_buf[3]) << 8) | rd_buf[2];

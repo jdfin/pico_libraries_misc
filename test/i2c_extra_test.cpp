@@ -1,17 +1,17 @@
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
 // pico
 #include "hardware/i2c.h"
 #include "pico/stdio.h"
 #include "pico/stdio_usb.h"
 #include "pico/stdlib.h"
+// touchscreen
+#include "gt911.h"
 // misc
 #include "dbg_gpio.h"
 #include "i2c_extra.h"
-#include "xassert.h"
-// touchscreen
-#include "gt911.h"
 
 static constexpr bool show_timing = false;
 
@@ -52,7 +52,7 @@ int main()
     Gt911 gt911(i2c_dev, tp_i2c_addr, tp_rst_pin, tp_int_pin);
 
     constexpr int verbosity = 2;
-    xassert(gt911.init(verbosity));
+    assert(gt911.init(verbosity));
 
     printf("i2c_extra_test: ready\n");
 

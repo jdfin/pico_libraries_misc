@@ -1,13 +1,17 @@
-#include "argv.h"
-#include "pico/stdlib.h"
-#include "xassert.h"
+
+#include <ctype.h>
+
+#include <cassert>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
-#include <ctype.h>
+// pico
+#include "pico/stdlib.h"
+// misc
+#include "argv.h"
 
-Argv::Argv(int verbosity)
-    : _verbosity(verbosity)
+Argv::Argv(int verbosity) :
+    _verbosity(verbosity)
 {
     reset();
 }
@@ -25,7 +29,7 @@ void Argv::print() const
     if (_verbosity >= 2) {
         printf("input=\"");
         for (int ch = 0; ch < _line_cnt; ch++) {
-            xassert(ch < _line_max);
+            assert(ch < _line_max);
             char c = _line[ch];
             if (c <= 0x20 || c >= 0x7f)
                 printf("'\\x%02X'", unsigned(c)); // not printable
@@ -53,7 +57,7 @@ int Argv::argc() const
     // Each token is terminated by '\0'.
     int tokens = 0;
     for (int i = 0; i < _line_cnt; i++) {
-        xassert(i < _line_max);
+        assert(i < _line_max);
         if (_line[i] == '\0')
             tokens++;
     }
@@ -64,7 +68,7 @@ int Argv::argc() const
 // When a '\r' or '\n' is found, the command line is complete (return true).
 bool Argv::add_char(char c)
 {
-    xassert(_line_cnt < _line_max);
+    assert(_line_cnt < _line_max);
     // invariant();
 
     // If we get an escape, reset and start over.
@@ -90,15 +94,16 @@ bool Argv::add_char(char c)
         if (c == '\r' || c == '\n')
             _complete = true;
         // if the most recent character received was whitespace, don't add another
-        xassert((_line_cnt - 1) < _line_max);
+        assert((_line_cnt - 1) < _line_max);
         if (_line[_line_cnt - 1] == '\0')
             return _complete;
         c = '\0'; // all whitespace is replaced
     }
 
     // very last character can only be '\0'
-    if (_line_cnt < (_line_max - 1) || (_line_cnt == (_line_max - 1) && c == '\0')) {
-        xassert(_line_cnt < _line_max);
+    if (_line_cnt < (_line_max - 1) ||
+        (_line_cnt == (_line_max - 1) && c == '\0')) {
+        assert(_line_cnt < _line_max);
         _line[_line_cnt++] = c;
     } else {
         reset();
@@ -111,7 +116,7 @@ bool Argv::add_char(char c)
     return _complete;
 }
 
-bool Argv::add_str(const char* s)
+bool Argv::add_str(const char *s)
 {
     while (*s != '\0')
         if (add_char(*s++))
@@ -119,9 +124,9 @@ bool Argv::add_str(const char* s)
     return false;
 }
 
-const char* Argv::operator[](int arg_num) const
+const char *Argv::operator[](int arg_num) const
 {
-    xassert(arg_num >= 0);
+    assert(arg_num >= 0);
 
     if (!_complete)
         return nullptr;
@@ -135,28 +140,28 @@ const char* Argv::operator[](int arg_num) const
             ;
     }
 
-    xassert(idx < _line_max);
+    assert(idx < _line_max);
     return _line + idx;
 }
 
 void Argv::invariant() const
 {
-    xassert(_line_cnt >= 0);
+    assert(_line_cnt >= 0);
     // _line_cnt can be _line_max if the last character is \0
-    xassert((_line_cnt < _line_max) || (_line_cnt == _line_max && _line[_line_max - 1] == '\0'));
+    assert((_line_cnt < _line_max) ||
+           (_line_cnt == _line_max && _line[_line_max - 1] == '\0'));
     // first character not '\0' (if there is one)
-    xassert(_line_cnt == 0 || _line[0] != '\0');
+    assert(_line_cnt == 0 || _line[0] != '\0');
     // no whitespace (whitespace runs all collapsed to one '\0')
     for (int i = 0; i < _line_cnt; i++)
-        xassert(!isspace(_line[i]));
+        assert(!isspace(_line[i]));
     // no more than one '\0' in a row
     for (int i = 0; i < (_line_cnt - 1); i++)
-        xassert(_line[i] != '\0' || _line[i + 1] != '\0');
+        assert(_line[i] != '\0' || _line[i + 1] != '\0');
 }
 
-bool Argv::check(int line_cnt, const char* line, bool complete) const
+bool Argv::check(int line_cnt, const char *line, bool complete) const
 {
-    return (line_cnt == _line_cnt)
-        && (memcmp(line, _line, _line_cnt) == 0)
-        && (complete == _complete);
+    return (line_cnt == _line_cnt) && (memcmp(line, _line, _line_cnt) == 0) &&
+           (complete == _complete);
 }
