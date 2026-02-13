@@ -4,7 +4,17 @@
 #include <cstdint>
 #include "hardware/timer.h"
 #include "hardware/gpio.h"
+
+// required as of SDK 2.2.0
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "pico/status_led.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 
 class SysLed {
@@ -13,6 +23,10 @@ class SysLed {
 
         static void init()
         {
+            // can't call status_led_init() more than once on wifi picos
+            if (_ready)
+                return;
+
 #ifdef TINY2040_LED_R_PIN
             gpio_init(TINY2040_LED_R_PIN);
             gpio_put(TINY2040_LED_R_PIN, 1);
@@ -30,6 +44,8 @@ class SysLed {
 #endif
             status_led_init();
             off();
+
+            _ready = true;
         }
 
         static void set(bool on)
@@ -92,6 +108,8 @@ class SysLed {
         }
 
     private:
+
+        static bool _ready;
 
         static uint32_t _on_ms;
         static uint32_t _off_ms;
