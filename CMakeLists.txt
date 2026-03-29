@@ -6,6 +6,7 @@ target_sources(misc INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/src/buf_log.cpp
     ${CMAKE_CURRENT_LIST_DIR}/src/dma_extra.c
     ${CMAKE_CURRENT_LIST_DIR}/src/dump.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/gpio_extra.c
     ${CMAKE_CURRENT_LIST_DIR}/src/i2c_extra.c
     ${CMAKE_CURRENT_LIST_DIR}/src/pretty_io.c
     ${CMAKE_CURRENT_LIST_DIR}/src/pwm_extra.c
@@ -29,3 +30,4 @@ target_link_libraries(misc INTERFACE
 )
 
 add_subdirectory(test)
+add_subdirectory(pwm_measure)
