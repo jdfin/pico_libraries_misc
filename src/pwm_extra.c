@@ -75,8 +75,11 @@ static void pwmx_init()
     // irq_set_exclusive_handler sets the handler for _both_ cores
     // irq_set_enabled enables the interrupt for only the calling core
 
-    irq_set_exclusive_handler(PWM_IRQ_WRAP_0, pwm_irq0_handler);
-    irq_set_enabled(PWM_IRQ_WRAP_0, true);
+    // RP2040 has only PWM_IRQ_WRAP
+    // RP2350 has PWM_IRQ_WRAP==PWM_IRQ_WRAP_0, and PWM_IRQ_WRAP_1
+
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_irq0_handler);
+    irq_set_enabled(PWM_IRQ_WRAP, true);
 
 #if (NUM_PWM_IRQS > 1)
     irq_set_exclusive_handler(PWM_IRQ_WRAP_1, pwm_irq1_handler);
